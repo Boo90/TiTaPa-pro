@@ -1,0 +1,21 @@
+services:
+  api:
+    build: ./backend
+    environment:
+      - JWT_SECRET=please-change-me
+      - APP_DIR=/app
+      - DATABASE_URL=sqlite:////app/db.sqlite3
+    volumes:
+      - api_data:/app
+    ports:
+      - "8000:8000"
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+volumes:
+  api_data:
