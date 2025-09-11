@@ -1,21 +1,25 @@
-services:
-  api:
-    build: ./backend
-    environment:
-      - JWT_SECRET=please-change-me
-      - APP_DIR=/app
-      - DATABASE_URL=sqlite:////app/db.sqlite3
-    volumes:
-      - api_data:/app
-    ports:
-      - "8000:8000"
-  frontend:
-    image: nginx:alpine
-    volumes:
-      - ./frontend:/usr/share/nginx/html:ro
-    ports:
-      - "8080:80"
-    depends_on:
-      - api
-volumes:
-  api_data:
+version: '3.8'  # تحديد إصدار Docker Compose
+
+services:  # تعريف الخدمات المختلفة
+  api:  # الخدمة الخاصة بالواجهة الخلفية
+    build: ./backend  # مسار بناء الصورة
+    environment:  # المتغيرات البيئية
+      - JWT_SECRET=please-change-me  # سر JWT
+      - APP_DIR=/app  # مسار التطبيق
+      - DATABASE_URL=sqlite:////app/db.sqlite3  # عنوان قاعدة البيانات
+    volumes:  # تحديد المجلدات المشتركة
+      - api_data:/app  # ربط مجلد البيانات
+    ports:  # تحديد المنافذ
+      - "8000:8000"  # ربط المنفذ 8000 في الحاوية مع المنفذ 8000 في المضيف
+
+  frontend:  # الخدمة الخاصة بالواجهة الأمامية
+    image: nginx:alpine  # استخدام صورة Nginx خفيفة
+    volumes:  # تحديد المجلدات المشتركة
+      - ./frontend:/usr/share/nginx/html:ro  # ربط مجلد الواجهة الأمامية
+    ports:  # تحديد المنافذ
+      - "8080:80"  # ربط المنفذ 80 في الحاوية مع المنفذ 8080 في المضيف
+    depends_on:  # تحديد الاعتمادات
+      - api  # تعتمد الواجهة الأمامية على خدمة الواجهة الخلفية
+
+volumes:  # تعريف الأحجام
+  api_data:  # حجم لتخزين بيانات الواجهة الخلفية
