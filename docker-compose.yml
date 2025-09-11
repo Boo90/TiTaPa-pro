@@ -23,3 +23,38 @@ services:  # تعريف الخدمات المختلفة
 
 volumes:  # تعريف الأحجام
   api_data:  # حجم لتخزين بيانات الواجهة الخلفية
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]  # تنفيذ CI لكل الفروع
+  pull_request:  # تنفيذ CI عند تقديم طلب سحب
+
+jobs:                                  
+  build:                                
+    runs-on: ubuntu-latest  # تشغيل الوظيفة على أحدث إصدار من Ubuntu
+
+    steps:                                
+      - name: Checkout code
+        uses: actions/checkout@v4  # جلب الشيفرة المصدرية من المستودع
+
+      - name: Set up Python
+        uses: actions/setup-python@v5  # إعداد بيئة Python
+        with:                                
+          python-version: '3.11'  # تحديد إصدار Python
+
+      - name: Install backend dependencies
+        run: |  # تثبيت التبعيات مباشرة
+          python -m pip install --upgrade pip  # تحديث pip
+          pip install fastapi pandas scikit-learn  # تثبيت الحزم المطلوبة مباشرة
+
+      - name: Import check
+        run: python -c "import fastapi, pandas, sklearn; print('Imports OK')"  # التحقق من استيراد المكتبات
+
+      - name: Install Docker Compose
+        run: |  # تثبيت Docker Compose
+          sudo apt-get update  # تحديث قائمة الحزم
+          sudo apt-get install -y docker-compose  # تثبيت Docker Compose
+
+      - name: Build Docker images
+        run: docker-compose build  # بناء صور Docker
